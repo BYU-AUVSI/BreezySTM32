@@ -42,7 +42,7 @@ static float diff_pressure_abs_Pa = 0.0f;
 static float diff_pressure_smooth_Pa = 0.0f;
 static float atmospheric_pressure = 101325.0f; // For ground level, should use ms5611 to provide
 
-static bool calibrated = true;
+static bool calibrated = false;
 static volatile float diff_pressure_offset = 0.0f;
 
 static inline float sign(float x)
@@ -115,7 +115,7 @@ void ms4525_update()
       // Filter diff pressure measurement
       float LPF_alpha = 0.1;
       diff_pressure_abs_Pa = raw_diff_pressure_Pa - diff_pressure_offset;
-      diff_pressure_smooth_Pa += diff_pressure_abs_Pa - LPF_alpha * (diff_pressure_abs_Pa - diff_pressure_smooth_Pa);
+      diff_pressure_smooth_Pa = diff_pressure_abs_Pa - LPF_alpha * (diff_pressure_abs_Pa - diff_pressure_smooth_Pa);
 
       velocity = sign(diff_pressure_smooth_Pa) * 24.574f/fastInvSqrt((absf(diff_pressure_smooth_Pa) * temp  /  atmospheric_pressure));
 
